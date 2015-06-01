@@ -9,12 +9,11 @@
 #import "SUClipImageMaskLayer.h"
 #import "SUClipImageOptions.h"
 
-@interface SUClipImageMaskLayer()
+@interface SUClipImageMaskLayer() <UIGestureRecognizerDelegate>
 @property(strong, nonatomic)SUClipImageOptions *options;
 
 @property (strong, nonatomic) UIBezierPath *shotPath;
 @property (strong, nonatomic) UIBezierPath *boundPath;
-@property (assign, nonatomic) BOOL qingkong;
 @end
 
 @implementation SUClipImageMaskLayer
@@ -26,9 +25,58 @@
         self.frame = rect;
         self.options = options;
         self.opaque = NO;
+        self.backgroundColor = [UIColor redColor];
     }
     
+    [self addGestures];
+    
     return self;
+}
+
+- (void)addGestures
+{
+    UIPinchGestureRecognizer *pinchGesture = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(pinchGestureTrigger:)];
+    [self addGestureRecognizer:pinchGesture];
+    
+    UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureTrigger:)];
+    [self addGestureRecognizer:panGesture];
+}
+//移动
+- (void)panGestureTrigger:(UIPanGestureRecognizer *)panGesture
+{
+    CGPoint panPoint = [panGesture translationInView:self];
+    CGFloat x = self.options.shotCenterPoint.x + panPoint.x;
+    CGFloat y = self.options.shotCenterPoint.y + panPoint.y;
+    //判断越界
+    CGFloat radius = self.options.shotRadius;
+    x = (x - radius < 0)? radius:x;
+    x = (x + radius > self.frame.size.width)? self.frame.size.width-radius:x;
+    y = (y - radius < 0)? radius:y;
+    y = (y + radius > self.frame.size.height)? self.frame.size.height-radius:y;
+    
+    self.options.shotCenterPoint = CGPointMake(x, y);
+    [panGesture setTranslation:CGPointZero inView:self];
+    [self setNeedsDisplay];
+}
+
+//缩放
+- (void)pinchGestureTrigger:(UIPinchGestureRecognizer *)pinchGesture
+{
+    CGFloat radius = self.options.shotRadius * pinchGesture.scale;
+    
+    //判断越界
+    CGPoint centerPoint = self.options.shotCenterPoint;
+    CGFloat x = centerPoint.x;
+    CGFloat y = centerPoint.y;
+    
+    radius = (x - radius < 0)? x:radius;
+    radius = (x + radius > self.frame.size.width)? self.frame.size.width-x:radius;
+    radius = (y - radius < 0)? y:radius;
+    radius = (y + radius > self.frame.size.height)? self.frame.size.height-y:radius;
+    
+    self.options.shotRadius = radius;
+    [pinchGesture setScale:1.0];
+    [self setNeedsDisplay];
 }
 
 - (void)drawRect:(CGRect)rect {
@@ -50,18 +98,11 @@
     [[UIColor whiteColor] set];
     CGContextSetAlpha(context, self.options.shotOuterAlpha);
     CGContextEOFillPath(context);
-    if (self.qingkong) {
-        CGContextClearRect(context, rect);
-    }
+
 }
 
-- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
-    UITouch *touch = [touches anyObject];
-    CGPoint curP =[touch locationInView:self];
-    self.options.shotCenterPoint = CGPointMake(curP.x, curP.y);
-    [self setNeedsDisplay];
+    return YES;
 }
-
-
 @end
