@@ -25,7 +25,6 @@
         self.frame = rect;
         self.options = options;
         self.opaque = NO;
-        self.backgroundColor = [UIColor redColor];
     }
     
     [self addGestures];
