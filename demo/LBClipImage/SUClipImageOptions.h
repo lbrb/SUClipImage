@@ -15,8 +15,7 @@
 @property (nonatomic, assign)CGFloat shotBorderWidth;   //镜头边框宽度 默认2像素
 @property (strong, nonatomic) UIColor *shotBorderColor; //镜头边框颜色 默认白色
 @property (nonatomic, assign)CGFloat shotOuterAlpha;    //镜头外部透明度 默认0.3
-@property (nonatomic, assign)CGFloat shotRadius;        //镜头的半径  默认100像素
-
+@property (nonatomic, assign)CGFloat shotRadius;        //镜头的半径  默认为长宽中较小值的一半
 @property (nonatomic, assign)CGSize outputSize;           //定义输出图片的大小，默认镜头在原图中的大小
 
 - (instancetype)init;

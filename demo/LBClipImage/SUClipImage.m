@@ -32,6 +32,7 @@
         self.originalImageView = originalImageView;
         self.originalImage = originalImage;
         self.options.shotCenterPoint = CGPointMake(self.originalImageView.frame.size.width/2.0, self.originalImageView.frame.size.height/2.0);
+        self.options.shotRadius = (self.originalImageView.frame.size.width > self.originalImageView.frame.size.height? self.originalImageView.frame.size.height :self.originalImageView.frame.size.width)/2.0;
         
     }
     return self;
