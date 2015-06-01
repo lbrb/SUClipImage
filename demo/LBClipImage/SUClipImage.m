@@ -21,6 +21,11 @@
 
 - (instancetype)initWithOriginalImageView:(UIImageView *)originalImageView originalImage:(UIImage *)originalImage;
 {
+    CGFloat scaleHeightRadio = self.originalImage.size.height/self.originalImageView.frame.size.height;
+    CGFloat scaleWidthRadio = self.originalImage.size.width/self.originalImageView.frame.size.width;
+    
+    NSAssert(scaleHeightRadio == scaleWidthRadio, @"抱歉，显示的图片与原图宽高不成比例，严重失真！不建议在此图片上截图！");
+    
     self = [super init];
     if (self) {
         self.options = [[SUClipImageOptions alloc]init];
@@ -43,10 +48,14 @@
 //截图
 - (UIImage *)takePicture
 {
-    CGFloat scaleRadio = self.originalImage.size.height/self.originalImageView.frame.size.height;
-    CGFloat clipX = (self.options.shotCenterPoint.x - self.options.shotRadius) * scaleRadio * self.originalImage.scale;
-    CGFloat clipY = (self.options.shotCenterPoint.y - self.options.shotRadius) * scaleRadio * self.originalImage.scale;
-    CGFloat clipWidth = self.options.shotRadius * scaleRadio * self.originalImage.scale * 2.0;
+    CGFloat scaleHeightRadio = self.originalImage.size.height/self.originalImageView.frame.size.height;
+    CGFloat scaleWidthRadio = self.originalImage.size.width/self.originalImageView.frame.size.width;
+    
+    NSAssert(scaleHeightRadio == scaleWidthRadio, @"抱歉，显示的图片与原图宽高不成比例，严重失真！不建议在此图片上截图！");
+    
+    CGFloat clipX = (self.options.shotCenterPoint.x - self.options.shotRadius) * scaleHeightRadio * self.originalImage.scale;
+    CGFloat clipY = (self.options.shotCenterPoint.y - self.options.shotRadius) * scaleHeightRadio * self.originalImage.scale;
+    CGFloat clipWidth = self.options.shotRadius * scaleHeightRadio * self.originalImage.scale * 2.0;
     CGFloat clipHeight = clipWidth;
     CGRect clipRect = CGRectMake(clipX, clipY, clipWidth, clipHeight);
     
