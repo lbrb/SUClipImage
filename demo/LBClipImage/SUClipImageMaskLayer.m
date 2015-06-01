@@ -63,6 +63,10 @@
 {
     CGFloat radius = self.options.shotRadius * pinchGesture.scale;
     
+    if (radius < minRadius) {
+        radius = minRadius;
+    }
+    
     //判断越界
     CGPoint centerPoint = self.options.shotCenterPoint;
     CGFloat x = centerPoint.x;
